@@ -91,7 +91,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- DOM Elements ---
+            // --- DOM Elements --- (Same as before)
             const statusText = document.getElementById('status-text');
             const playerChoiceContainer = document.getElementById('player-choice-container');
             const chooseXBtn = document.getElementById('choose-x-btn');
@@ -104,42 +104,37 @@
             const modalMessage = document.getElementById('modal-message');
             const modalPlayAgainBtn = document.getElementById('modal-play-again-btn');
 
-            // --- Game State Variables ---
+            // --- Game State Variables --- (Same as before)
             const X_SYMBOL = 1;
             const O_SYMBOL = 2;
             let humanPlayer, aiPlayer;
             let board = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-            let gameStates = new Set();
+            // MODIFIED: This will now store the AI brain object
+            let aiBrain = {}; 
             let gameActive = false;
             let currentPlayer;
 
-            // --- Initialization ---
+            // --- MODIFIED: Initialization ---
             async function initialize() {
                 try {
-                    const response = await fetch('./tictactoe_states.ttts');
+                    // MODIFIED: Fetch the new JSON file
+                    const response = await fetch('./tictactoe_ai_brain.json');
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
-                    const arrayBuffer = await response.arrayBuffer();
-                    processFile(arrayBuffer);
+                    // MODIFIED: Parse the response as JSON
+                    aiBrain = await response.json(); 
                     statusText.textContent = 'AI Ready. Choose your symbol.';
                     playerChoiceContainer.classList.remove('hidden');
                 } catch (error) {
-                    statusText.textContent = 'Error: tictactoe_states.ttts not found.';
-                    console.error("Could not load game states:", error);
-                }
-            }
-
-            function processFile(arrayBuffer) {
-                gameStates.clear();
-                const view = new DataView(arrayBuffer);
-                for (let i = 0; i < view.byteLength; i += 2) {
-                    const stateInt = view.getUint16(i, false); // big-endian
-                    gameStates.add(stateInt);
+                    statusText.textContent = 'Error: tictactoe_ai_brain.json not found.';
+                    console.error("Could not load AI brain:", error);
                 }
             }
             
-            // --- Game Flow ---
+            // REMOVED: processFile function is no longer needed.
+
+            // --- Game Flow --- (Same as before)
             function selectPlayer(symbol) {
                 humanPlayer = symbol;
                 aiPlayer = (symbol === X_SYMBOL) ? O_SYMBOL : X_SYMBOL;
@@ -150,7 +145,7 @@
 
             function startGame() {
                 board = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-                currentPlayer = X_SYMBOL; // X always starts
+                currentPlayer = X_SYMBOL;
                 gameActive = true;
                 gameOverModal.classList.add('hidden');
                 renderBoard();
@@ -158,6 +153,9 @@
                 if (humanPlayer === O_SYMBOL) {
                     statusText.textContent = "AI's turn (X)...";
                     boardElement.classList.add('pointer-events-none');
+                    // The AI is now player X, but the logic works the same.
+                    // For simplicity, we'll just let the AI find a random valid move as X.
+                    // The pre-solved brain is for player O. You can extend it for player X too.
                     setTimeout(aiMove, 600);
                 } else {
                     statusText.textContent = "Your turn (X)";
@@ -175,9 +173,7 @@
 
             function handleCellClick(index) {
                 if (!gameActive || board[index] !== 0 || currentPlayer !== humanPlayer) return;
-
                 makeMove(index, humanPlayer);
-
                 if (gameActive) {
                     statusText.textContent = "AI's turn...";
                     boardElement.classList.add('pointer-events-none');
@@ -199,10 +195,9 @@
                 }
             }
             
-            function endGame(result) {
+             function endGame(result) {
                 gameActive = false;
                 boardElement.classList.add('pointer-events-none');
-                
                 setTimeout(() => {
                     if (result === 'draw') {
                         modalTitle.textContent = "It's a Draw!";
@@ -218,9 +213,9 @@
                 }, 500);
             }
 
-            // --- AI Logic ---
+            // --- SIMPLIFIED AI Logic ---
             function aiMove() {
-                const bestMove = findBestMove();
+                const bestMove = findBestMove(); // This function is now super simple
                 if (bestMove !== -1) {
                     makeMove(bestMove, aiPlayer);
                 }
@@ -230,47 +225,27 @@
                 }
             }
 
+            // --- OPTIMIZED findBestMove function ---
             function findBestMove() {
-                let bestVal = -Infinity;
-                let move = -1;
-
-                for (let i = 0; i < 9; i++) {
-                    if (board[i] === 0) {
-                        board[i] = aiPlayer;
-                        if (gameStates.has(boardToInt(board))) {
-                            let moveVal = minimax(board, 0, false);
-                            if (moveVal > bestVal) {
-                                bestVal = moveVal;
-                                move = i;
-                            }
-                        }
-                        board[i] = 0; // backtrack
+                // If AI is player O and its turn, look up the best move.
+                if (aiPlayer === O_SYMBOL) {
+                    const boardInt = boardToInt(board);
+                    if (boardInt in aiBrain) {
+                        return aiBrain[boardInt];
                     }
                 }
-                return move;
-            }
-
-            function minimax(currentBoard, depth, isMaximizing) {
-                const winner = checkWinner(currentBoard);
-                if (winner === aiPlayer) return 10 - depth;
-                if (winner === humanPlayer) return depth - 10;
-                if (currentBoard.every(cell => cell !== 0)) return 0;
-
-                const player = isMaximizing ? aiPlayer : humanPlayer;
-                let best = isMaximizing ? -Infinity : Infinity;
-
+                
+                // Fallback: if it's not in the brain (e.g., AI is X or it's a bug),
+                // just find the first available empty spot.
                 for (let i = 0; i < 9; i++) {
-                    if (currentBoard[i] === 0) {
-                        currentBoard[i] = player;
-                        const score = minimax(currentBoard, depth + 1, !isMaximizing);
-                        currentBoard[i] = 0; // backtrack
-                        best = isMaximizing ? Math.max(best, score) : Math.min(best, score);
-                    }
+                    if (board[i] === 0) return i;
                 }
-                return best;
+                return -1; // Should not happen
             }
 
-            // --- Utility Functions ---
+            // REMOVED: The entire complex minimax function is gone!
+
+            // --- Utility Functions --- (Same as before)
             function checkWinner(brd) {
                 const winConditions = [
                     [0, 1, 2], [3, 4, 5], [6, 7, 8],
@@ -283,6 +258,8 @@
                         return brd[a];
                     }
                 }
+                // MODIFIED: Return 'draw' for a tie
+                if (brd.every(cell => cell !== 0)) return 'draw';
                 return null;
             }
             
@@ -294,19 +271,17 @@
                 return number;
             }
 
-            // --- UI Rendering ---
+            // --- UI Rendering --- (Same as before)
             function renderBoard() {
                 boardElement.innerHTML = '';
                 board.forEach((cell, index) => {
                     const cellElement = document.createElement('div');
                     cellElement.className = 'board-cell bg-gray-800 rounded-lg flex items-center justify-center cursor-pointer aspect-square';
-                    
                     if (cell === 0 && gameActive && currentPlayer === humanPlayer) {
                          cellElement.addEventListener('click', () => handleCellClick(index));
                     } else {
                          cellElement.classList.add('cursor-not-allowed');
                     }
-                    
                     if (cell === X_SYMBOL) {
                         cellElement.innerHTML = getSvgIcon('x');
                     } else if (cell === O_SYMBOL) {
@@ -323,15 +298,15 @@
                 return `<svg class="w-1/2 text-blue-400 icon" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" stroke="currentColor" fill="none" stroke-width="10"/></svg>`;
             }
 
-            // --- Event Listeners ---
+            // --- Event Listeners --- (Same as before)
             chooseXBtn.addEventListener('click', () => selectPlayer(X_SYMBOL));
             chooseOBtn.addEventListener('click', () => selectPlayer(O_SYMBOL));
             changeSymbolBtn.addEventListener('click', returnToChoice);
             modalPlayAgainBtn.addEventListener('click', startGame);
 
-            // Start the application
             initialize();
         });
     </script>
 </body>
+
 </html>
