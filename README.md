@@ -38,4 +38,4 @@ This isn't your average game AI. It doesn't "think" in real-time. Instead, its p
 
 -   `index.html`: The complete game, including all the UI, logic, and the AI's pre-computed moves.
 -   `Tic-Tac-Toe_State_Generator.py`: The script used to create the AI's "brain." You don't need to run this to play.
--   `tictactoe_states.ttts`: This is the AI's brain,
+-   `tictactoe_states.ttts`: This is the AI's brain.
