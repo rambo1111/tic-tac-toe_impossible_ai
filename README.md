@@ -1,6 +1,6 @@
 # 🤖 Impossible Tic-Tac-Toe AI 🧠
 
-Welcome, brave human\! You've stumbled upon a Tic-Tac-Toe game where the AI has an ego bigger than my `node_modules` folder. It has studied every possible move and is literally unbeatable. Do you have what it takes to force a draw? Probably not, but it's fun to try\! 😂
+Welcome, brave human\! You've stumbled upon a Tic-Tac-Toe game where the AI has an ego bigger than my `node_modules` folder. It has studied every possible move and is literally unbeatable. Do you have what it takes to win? Probably not, but it's fun to try\! 😂
 
 ### ➡️ **[Challenge the AI - Live Demo\!](https://rambo1111.github.io/tic-tac-toe_impossible_ai/)** ⬅️
 
