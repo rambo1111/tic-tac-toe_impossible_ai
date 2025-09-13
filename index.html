@@ -116,7 +116,7 @@
             // --- Initialization ---
             async function initialize() {
                 try {
-                    const response = await fetch('./tictactoe_states.ttts');
+                    const response = await fetch('tictactoe_states.ttts');
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
@@ -334,4 +334,5 @@
         });
     </script>
 </body>
+
 </html>
