@@ -15,7 +15,7 @@ Can you outsmart a perfect machine? The best you can hope for is a draw! 🤝
 This isn't your average game AI. It doesn't "think" in real-time. Instead, its perfection is achieved through a clever pre-computation process:
 
 1.  **Game State Mapping:** Using the `Tic-Tac-Toe_State_Generator.py` script, every single possible board layout in Tic-Tac-Toe was generated.
-2.  **Minimax Perfection:** For each of these 5,478 states, the Minimax algorithm was used to determine the mathematically optimal move.
+2.  **Minimax Perfection:** For each of these 2,097 states, the Minimax algorithm was used to determine the mathematically optimal move.
 3.  **The AI's "Brain":** All of these states and their corresponding best moves were then hardcoded into a giant JavaScript object inside `index.html`.
 4.  **Flawless Execution:** When it's the AI's turn, it simply finds the current board configuration in its pre-computed "brain" and executes the perfect move instantly. No thinking, no delay, no mistakes. ⚡
 
