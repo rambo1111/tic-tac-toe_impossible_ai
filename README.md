@@ -46,36 +46,3 @@ Because it has already mapped out the entire game and uses a perfect algorithm, 
   * **Frontend**: HTML, [Tailwind CSS](https://tailwindcss.com/), JavaScript (ES6+)
   * **State Generation Script**: Python 3
   * **Font**: [Inter](https://fonts.google.com/specimen/Inter) from Google Fonts
-
------
-
-## 🚀 Getting Started Locally
-
-Want to peek under the hood or run this yourself? It's simple\!
-
-1.  **Clone the repository:**
-
-    ```bash
-    git clone https://github.com/your-username/your-repo-name.git
-    ```
-
-2.  **Navigate to the directory:**
-
-    ```bash
-    cd your-repo-name
-    ```
-
-3.  **Run a local server:**
-    Since the game uses `fetch()` to load the `.ttts` file, you need to serve the files from a local web server. The easiest way is using Python's built-in server.
-
-    For Python 3:
-
-    ```bash
-    python -m http.server
-    ```
-
-    Then open `http://localhost:8000` in your browser.
-
------
-
-Good luck. You're going to need it. 😉
